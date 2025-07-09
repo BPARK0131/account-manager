@@ -7,13 +7,23 @@ from .models import UserRole
 class CredentialBase(BaseModel):
     service_name: str
     username: str
+    url: Optional[str] = None
+    notes: Optional[str] = None
 
 class CredentialCreate(CredentialBase):
     password: str # Plain password, will be encrypted in the backend
 
+class CredentialUpdate(BaseModel):
+    service_name: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    url: Optional[str] = None
+    notes: Optional[str] = None
+
 class Credential(CredentialBase):
     id: int
     owner_id: int
+    password: Optional[str] = None # To hold decrypted password for frontend
 
     model_config = ConfigDict(from_attributes=True)
 

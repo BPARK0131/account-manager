@@ -1,5 +1,6 @@
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
@@ -12,6 +13,19 @@ from .database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# CORS middleware setup
+origins = [
+    "http://localhost:3000",  # React app
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency to get DB session
 def get_db():
@@ -75,4 +89,39 @@ def read_credentials_for_user(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     credentials = crud.get_credentials_by_owner(db, owner_id=current_user.id, skip=skip, limit=limit)
+    # Decrypt passwords before sending
+    for cred in credentials:
+        cred.password = auth.decrypt_password(cred.encrypted_password)
     return credentials
+
+@app.put("/credentials/{credential_id}", response_model=schemas.Credential)
+def update_credential_for_user(
+    credential_id: int,
+    credential: schemas.CredentialUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    encrypted_password = auth.encrypt_password(credential.password) if credential.password else None
+    updated_credential = crud.update_credential(
+        db=db,
+        credential_id=credential_id,
+        credential_update=credential,
+        encrypted_password=encrypted_password,
+        owner_id=current_user.id
+    )
+    if updated_credential is None:
+        raise HTTPException(status_code=404, detail="Credential not found")
+    updated_credential.password = auth.decrypt_password(updated_credential.encrypted_password)
+    return updated_credential
+
+@app.delete("/credentials/{credential_id}", response_model=schemas.Credential)
+def delete_credential_for_user(
+    credential_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    deleted_credential = crud.delete_credential(db=db, credential_id=credential_id, owner_id=current_user.id)
+    if deleted_credential is None:
+        raise HTTPException(status_code=404, detail="Credential not found")
+    deleted_credential.password = "DELETED" # Don't need to decrypt
+    return deleted_credential
