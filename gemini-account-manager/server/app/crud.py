@@ -28,6 +28,8 @@ def create_credential(db: Session, credential: schemas.CredentialCreate, encrypt
         service_name=credential.service_name,
         username=credential.username,
         encrypted_password=encrypted_password,
+        url=credential.url,
+        notes=credential.notes,
         owner_id=owner_id
     )
     db.add(db_credential)

@@ -1,4 +1,3 @@
-
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -7,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    # Connect to the default 'postgres' database to create a new database
+    # Connect to the default 'postgres' database to manage our target database
     conn = psycopg2.connect(
         dbname="postgres",
         user=os.getenv("DB_USER"),
@@ -20,15 +19,16 @@ try:
 
     db_name = os.getenv("DB_NAME")
 
-    # Check if the database already exists
-    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (db_name,))
-    exists = cursor.fetchone()
+    # Drop the database if it exists to ensure a clean start
+    print(f"Attempting to drop database '{db_name}' if it exists...")
+    # Using WITH (FORCE) to terminate any active connections
+    cursor.execute(f"DROP DATABASE IF EXISTS {db_name} WITH (FORCE)")
+    print(f"Database '{db_name}' dropped or did not exist.")
 
-    if not exists:
-        cursor.execute(f"CREATE DATABASE {db_name}")
-        print(f"Database '{db_name}' created successfully.")
-    else:
-        print(f"Database '{db_name}' already exists.")
+    # Create the database
+    print(f"Creating database '{db_name}'...")
+    cursor.execute(f"CREATE DATABASE {db_name}")
+    print(f"Database '{db_name}' created successfully.")
 
 except psycopg2.OperationalError as e:
     print(f"Error: Could not connect to PostgreSQL.")

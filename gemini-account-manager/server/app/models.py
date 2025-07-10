@@ -26,6 +26,8 @@ class Credential(Base):
     service_name = Column(String, index=True, nullable=False)
     username = Column(String, nullable=False)
     encrypted_password = Column(String, nullable=False)
+    url = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="credentials")
