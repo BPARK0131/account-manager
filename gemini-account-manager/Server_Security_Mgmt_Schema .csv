@@ -1,0 +1,6 @@
+﻿,,,,,,,,,,,,,,,,,,,,,,,,,,,,상시 보안 점검 항목,,,,,,,,,,,,,,,,,,
+순번,관리ID,서버명,"장비명
+(호스트명)",지역,IP,SGW 계정관리,1차 계정,1차 계정 비번(신),root계정,root비번(신),비고,벤더,OS Type,OS (버전도 명기),OS (직접확인),HW기종,실물확인,가상화 장비 유무,관리사옥별 층,상면위치,관리,Secure Gateway,Smart Guard 등록,Smart Guard 진단,EDR대상,백신(EDR) 설치 제품,안랩대상,Apache Subersion,Git LFS,7-Zip,WinZip,PostgreSQL,VMware,Kibana,GRUB2,Google Chrome,Junos OS,Roundcube Webmail,Firefox,Veeam Backup & Replication,Linux Kernel,SUSE Linux,Ubuntu,"Cisco ISE
+Cisco ISE-PIC",Notepad++ Installer,Sudo
+1,SVR-IP-11306, ADVA EdgeClock ENC 서버-둔산,ec-adva-dj,둔산,60.22.173.30,1차(완료),test,월 자동변경,root,월 자동변경,운용,HP,Linux,CentOS 7,CentOS 7,DL360 Gen10,구둔산 3층 I-R-12,물리,구둔산 3층,I-R-12,전송운용2팀,등록,기등록(자동),완료,Full Scan 완료,SentinelOne EDR,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
